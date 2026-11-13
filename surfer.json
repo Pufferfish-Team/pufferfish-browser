@@ -1,0 +1,21 @@
+{
+  "name": "Pufferfish",
+  "vendor": "Pufferfish Team",
+  "appId": "com.pufferfish.browser",
+  "binaryName": "pufferfish-browser",
+  "version": {
+    "product": "firefox",
+    "version": "160.0"
+  },
+  "buildOptions": {
+    "windowsUseSymbolicLinks": false
+  },
+  "addons": {},
+  "brands": {},
+  "license": {
+    "ignoredFiles": [
+      ".*\\.json"
+    ],
+    "licenseType": "MPL-2.0"
+  }
+}
