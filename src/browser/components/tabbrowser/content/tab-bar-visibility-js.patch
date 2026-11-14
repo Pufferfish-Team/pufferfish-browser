@@ -1,0 +1,54 @@
+diff --git a/browser/components/tabbrowser/content/tab-bar-visibility.js b/browser/components/tabbrowser/content/tab-bar-visibility.js
+index 45f3efabc9fe2d38e3a53324dd82aa54d683bda3..52544068e0de439ceafb1233f9c6b8cbb92abd3e 100644
+--- a/browser/components/tabbrowser/content/tab-bar-visibility.js
++++ b/browser/components/tabbrowser/content/tab-bar-visibility.js
+@@ -4,6 +4,23 @@
+ 
+ var TabBarVisibility = {
+   _initialUpdateDone: false,
++  _hideTabStripObserver: null,
++
++  // Pufferfish: re-check tab strip visibility when the pref changes, so
++  // flipping it in about:config takes effect without a restart.
++  _observeHideTabStripPref() {
++    if (this._hideTabStripObserver) {
++      return;
++    }
++    const PREF = "pufferfish.tabs.hideTabStrip";
++    this._hideTabStripObserver = () => this.update(true);
++    Services.prefs.addObserver(PREF, this._hideTabStripObserver);
++    window.addEventListener(
++      "unload",
++      () => Services.prefs.removeObserver(PREF, this._hideTabStripObserver),
++      { once: true }
++    );
++  },
+ 
+   update(force = false) {
+     let isPopup = !window.toolbar.visible;
+@@ -15,6 +32,14 @@ var TabBarVisibility = {
+       !isSingleTabWindow &&
+       Services.prefs.getBoolPref("sidebar.verticalTabs", false);
+ 
++    // Pufferfish: the horizontal tab strip is hidden by default. Tabs are
++    // switched with Ctrl+Tab (and later the tab dock). Set
++    // "pufferfish.tabs.hideTabStrip" to false to bring the strip back.
++    let hasHiddenTabStrip =
++      !isSingleTabWindow &&
++      Services.prefs.getBoolPref("pufferfish.tabs.hideTabStrip", true);
++    this._observeHideTabStripPref();
++
+     // When `gBrowser` has not been initialized, we're opening a new window and
+     // assume only a single tab is loading.
+     let hasSingleTab = !gBrowser || gBrowser.visibleTabs.length == 1;
+@@ -22,7 +47,9 @@ var TabBarVisibility = {
+     // To prevent tabs being lost, hiding the tabs toolbar should only work
+     // when only a single tab is visible or tabs are displayed elsewhere.
+     let hideTabsToolbar =
+-      (isSingleTabWindow && hasSingleTab) || hasVerticalTabs;
++      (isSingleTabWindow && hasSingleTab) ||
++      hasVerticalTabs ||
++      hasHiddenTabStrip;
+ 
+     // We only want a non-customized titlebar for popups. It should not be the
+     // case, but if a popup window contains more than one tab we re-enable

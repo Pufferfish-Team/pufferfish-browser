@@ -1,0 +1,22 @@
+diff --git a/browser/app/profile/firefox.js b/browser/app/profile/firefox.js
+index 15a12b67bde1501b2070a19c77a6676943bc1df9..f2d7981281a86b082d991de07ad6fe318de09db0 100644
+--- a/browser/app/profile/firefox.js
++++ b/browser/app/profile/firefox.js
+@@ -1269,7 +1269,8 @@ pref("browser.tabs.contextmenu.altstructure.enabled", false);
+   pref("browser.lowMemoryResponseOnWarn", false);
+ #endif
+ 
+-pref("browser.ctrlTab.sortByRecentlyUsed", false);
++// Pufferfish: Ctrl+Tab shows previews of recently used tabs.
++pref("browser.ctrlTab.sortByRecentlyUsed", true);
+ 
+ // How many tab thumbnails to show in the ctrl-tab panel, clamped to [4, 49].
+ // Only relevant when browser.ctrlTab.sortByRecentlyUsed is true.
+@@ -3909,3 +3910,7 @@ pref("distribution.mozillaonline.ignore", true);
+ #ifdef XP_MACOSX
+   pref("browser.macAppMenu.setAsDefaultShown", false);
+ #endif
++
++// Pufferfish
++// Hide the horizontal tab strip; tabs are switched with Ctrl+Tab and the tab dock.
++pref("pufferfish.tabs.hideTabStrip", true);

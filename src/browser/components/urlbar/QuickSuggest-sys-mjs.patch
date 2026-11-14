@@ -1,0 +1,25 @@
+diff --git a/browser/components/urlbar/QuickSuggest.sys.mjs b/browser/components/urlbar/QuickSuggest.sys.mjs
+index 9276984075668da1530f3eecbb6d9491b2a86de9..848a893193d88482852f467a496dadfa10236bbf 100644
+--- a/browser/components/urlbar/QuickSuggest.sys.mjs
++++ b/browser/components/urlbar/QuickSuggest.sys.mjs
+@@ -102,17 +102,9 @@ const SUGGEST_PREFS = Object.freeze({
+   //
+   // Please update `test_quicksuggest_defaultPrefs.js` when you change these.
+   "quicksuggest.enabled": {
+-    defaultValues: {
+-      // US, GB, and EU 3 (DE, FR, IT)
+-      DE: [["de", ...EN_LOCALES], true],
+-      FR: [["fr", ...EN_LOCALES], true],
+-      GB: [EN_LOCALES, true],
+-      IT: [["it", ...EN_LOCALES], true],
+-      US: [EN_LOCALES, true],
+-
+-      // EU expansion in 157 (bug 2066294)
+-      ...REGION_LOCALE_DEFAULTS_EU_157_BOOLEAN,
+-    },
++    // Pufferfish: Firefox Suggest is off in every region, so the browser
++    // never downloads suggestion data (including sponsored suggestions).
++    defaultValues: {},
+   },
+   "quicksuggest.online.available": {
+     defaultValues: {
