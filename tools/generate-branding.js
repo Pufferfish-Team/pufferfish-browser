@@ -1,5 +1,6 @@
 // Generates every icon surfer needs for the Pufferfish brand from the two
-// master SVGs in configs/branding/pufferfish.
+// master SVGs in configs/branding/pufferfish (and the private browsing icons
+// from logo-private.svg).
 //
 //   node tools/generate-branding.js
 //
@@ -12,6 +13,7 @@ const sharp = require("sharp");
 const DIR = path.join(__dirname, "..", "configs", "branding", "pufferfish");
 const FULL = path.join(DIR, "logo.svg");
 const SMALL = path.join(DIR, "logo-small.svg");
+const PRIVATE = path.join(DIR, "logo-private.svg");
 
 const render = (svg, size) =>
   sharp(svg, { density: Math.max(72, (size / 100) * 72 * 1.5) })
@@ -74,6 +76,27 @@ function buildIco(images) {
   const content = path.join(DIR, "content");
   fs.mkdirSync(content, { recursive: true });
   fs.copyFileSync(FULL, path.join(content, "about-logo.svg"));
+
+  // Private browsing: the pufferfish among coral, from logo-private.svg, in
+  // place of Firefox's mask. pbmode.ico is the taskbar icon of private
+  // windows; the tiles are its Start menu tiles.
+  const privateIco = buildIco(
+    await Promise.all(
+      [16, 24, 32, 48, 64, 128, 256].map(async size => ({
+        size,
+        data: await render(PRIVATE, size),
+      }))
+    )
+  );
+  fs.writeFileSync(path.join(DIR, "pbmode.ico"), privateIco);
+  for (const [name, size] of [
+    ["PrivateBrowsing_70.png", 142],
+    ["PrivateBrowsing_150.png", 300],
+    ["content/about-logo-private.png", 192],
+    ["content/about-logo-private@2x.png", 384],
+  ]) {
+    fs.writeFileSync(path.join(DIR, name), await render(PRIVATE, size));
+  }
 
   console.log("Branding icons written to", DIR);
 })().catch(e => {

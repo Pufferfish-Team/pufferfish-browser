@@ -1,0 +1,59 @@
+diff --git a/browser/themes/shared/privatebrowsing/pbm-logo.svg b/browser/themes/shared/privatebrowsing/pbm-logo.svg
+index ea18b89b02f8b079f21028dcc1acaf02b1d4e84b..08b283945e1cfed9a87cc5ce5ad4870c78cfd6c5 100644
+--- a/browser/themes/shared/privatebrowsing/pbm-logo.svg
++++ b/browser/themes/shared/privatebrowsing/pbm-logo.svg
+@@ -1,15 +1,45 @@
+ <!-- This Source Code Form is subject to the terms of the Mozilla Public
+    - License, v. 2.0. If a copy of the MPL was not distributed with this
+    - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+-<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="none" viewBox="0 0 48 48">
+-  <circle cx="24" cy="24" r="24" fill="context-fill #7338e2"/>
+-  <path fill="#000" d="M42.336 26.011c-1.801 0-2.72-1.305-3.063-3.078-.498-2.57-1.363-5-2.388-7.423-.527-1.246-1.492-4.109-3.086-4.436-1.813-.375-3.412.603-5.48 4.747-1.7 3.418-2.85 5.8-2.85 5.8v.024l-1.167-.012h-.586s-.03 0-.03.006l-1.167.012v-.024s-1.15-2.388-2.85-5.8c-2.061-4.15-3.666-5.122-5.48-4.748-1.593.328-2.559 3.196-3.086 4.437-1.025 2.424-1.89 4.847-2.387 7.422-.344 1.774-1.256 3.073-3.063 3.08-.462 0-.77.48-.61.906.385 1.03 1.57 1.686 2.559 2.067-.444.117-1.771-.152-1.83.515-.048.544 1.338 1.094 1.712 1.27 3.489 1.68 6.7 4.694 10.829 4.162 1.795-.234 3.104-1.499 4.574-2.283a2.38 2.38 0 0 1 2.227 0c1.47.784 2.778 2.049 4.573 2.283 4.13.532 7.34-2.482 10.83-4.162.373-.181 1.753-.726 1.712-1.27-.053-.662-1.38-.398-1.83-.515.989-.38 2.174-1.036 2.559-2.067a.674.674 0 0 0-.61-.907zm-29.248.884c-.053-.556 1.155-.983 1.593-1.053 2.607-.433 6.06.585 6.902 3.283-2.393 2.184-7.322.68-8.495-2.224zm13.312 2.23c.84-2.698 4.295-3.716 6.901-3.283.439.07 1.647.497 1.594 1.053-1.179 2.904-6.102 4.414-8.496 2.224z"/>
+-  <path fill="url(#a)" d="M42.336 26.011c-1.801 0-2.72-1.305-3.063-3.078-.498-2.57-1.363-5-2.388-7.423-.527-1.246-1.492-4.109-3.086-4.436-1.813-.375-3.412.603-5.48 4.747-1.7 3.418-2.85 5.8-2.85 5.8v.024l-1.167-.012h-.586s-.03 0-.03.006l-1.167.012v-.024s-1.15-2.388-2.85-5.8c-2.061-4.15-3.666-5.122-5.48-4.748-1.593.328-2.559 3.196-3.086 4.437-1.025 2.424-1.89 4.847-2.387 7.422-.344 1.774-1.256 3.073-3.063 3.08-.462 0-.77.48-.61.906.385 1.03 1.57 1.686 2.559 2.067-.444.117-1.771-.152-1.83.515-.048.544 1.338 1.094 1.712 1.27 3.489 1.68 6.7 4.694 10.829 4.162 1.795-.234 3.104-1.499 4.574-2.283a2.38 2.38 0 0 1 2.227 0c1.47.784 2.778 2.049 4.573 2.283 4.13.532 7.34-2.482 10.83-4.162.373-.181 1.753-.726 1.712-1.27-.053-.662-1.38-.398-1.83-.515.989-.38 2.174-1.036 2.559-2.067a.674.674 0 0 0-.61-.907zm-29.248.884c-.053-.556 1.155-.983 1.593-1.053 2.607-.433 6.06.585 6.902 3.283-2.393 2.184-7.322.68-8.495-2.224zm13.312 2.23c.84-2.698 4.295-3.716 6.901-3.283.439.07 1.647.497 1.594 1.053-1.179 2.904-6.102 4.414-8.496 2.224z"/>
+-  <circle cx="24" cy="24" r="22.5" fill="none" stroke="context-stroke transparent" stroke-width="3"/>
++<!-- Pufferfish: a pufferfish among coral in place of Firefox's mask. Drawn
++   - from configs/branding/pufferfish/logo-private.svg. -->
++<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="48" height="48" fill="none">
+   <defs>
+-    <linearGradient id="a" x1="30.701" x2="30.709" y1="47.041" y2="-4.5" gradientUnits="userSpaceOnUse">
+-      <stop stop-color="#fff"/>
+-      <stop offset="1" stop-color="#d7bfff"/>
+-    </linearGradient>
++    <clipPath id="disc"><circle cx="50" cy="50" r="50"/></clipPath>
+   </defs>
++  <circle cx="50" cy="50" r="50" fill="context-fill #7338e2"/>
++  <g clip-path="url(#disc)">
++    <!-- Coral behind the fish. -->
++    <g stroke="#C85A3E" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round" fill="none">
++      <path d="M17 100 V62 L9 46 M17 62 L25 42 M17 78 L7 71"/>
++      <path d="M83 100 V60 L92 44 M83 60 L75 38 M83 78 L93 72"/>
++    </g>
++    <!-- The pufferfish, the same drawing as the main logo. -->
++    <g transform="translate(50 45) scale(0.78) translate(-50 -50)">
++      <g fill="#FFFFFF">
++        <polygon points="46.5,21 50,11 53.5,21"/>
++        <polygon points="46.5,21 50,11 53.5,21" transform="rotate(36 50 50)"/>
++        <polygon points="46.5,21 50,11 53.5,21" transform="rotate(72 50 50)"/>
++        <polygon points="46.5,21 50,11 53.5,21" transform="rotate(108 50 50)"/>
++        <polygon points="46.5,21 50,11 53.5,21" transform="rotate(144 50 50)"/>
++        <polygon points="46.5,21 50,11 53.5,21" transform="rotate(180 50 50)"/>
++        <polygon points="46.5,21 50,11 53.5,21" transform="rotate(216 50 50)"/>
++        <polygon points="46.5,21 50,11 53.5,21" transform="rotate(324 50 50)"/>
++        <path d="M23 50 L11 40 Q8.5 50 11 60Z"/>
++        <circle cx="50" cy="50" r="29"/>
++      </g>
++      <path d="M22.13 58 Q34 50 50 57 T78.57 55 A29 29 0 0 1 22.13 58Z" fill="#E4D6FF"/>
++      <path d="M47 44 q-6 7 0 14" stroke="#7338E2" stroke-width="2.6" fill="none" stroke-linecap="round"/>
++      <circle cx="68" cy="44" r="3.8" fill="#2B1066"/>
++      <circle cx="69.3" cy="42.7" r="1.1" fill="#FFFFFF"/>
++      <path d="M72.5 56 q3.5 1.5 6 -1.5" stroke="#2B1066" stroke-width="2.4" fill="none" stroke-linecap="round"/>
++    </g>
++    <!-- Coral in front, hiding most of the fish below its eye. -->
++    <g stroke="#F28C6B" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none">
++      <path d="M31 100 V68 L21 51 M31 68 L40 50 M31 84 L20 77"/>
++      <path d="M68 100 V66 L59 50 M68 66 L80 51 M68 83 L79 77"/>
++      <path d="M50 100 V72 L43 58 M50 72 L57 59 M50 86 L58 81"/>
++    </g>
++  </g>
++  <circle cx="50" cy="50" r="46.875" fill="none" stroke="context-stroke transparent" stroke-width="6.25"/>
+ </svg>

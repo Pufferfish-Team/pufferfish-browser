@@ -1,0 +1,54 @@
+diff --git a/toolkit/themes/shared/icons/indicator-private-browsing.svg b/toolkit/themes/shared/icons/indicator-private-browsing.svg
+index 4cdc760e3ca424f651f2a1b94927f872e86e5033..86c198d269274cd5fbc98cc59890e4813c4a6f96 100644
+--- a/toolkit/themes/shared/icons/indicator-private-browsing.svg
++++ b/toolkit/themes/shared/icons/indicator-private-browsing.svg
+@@ -1,9 +1,44 @@
+ <!-- This Source Code Form is subject to the terms of the Mozilla Public
+    - License, v. 2.0. If a copy of the MPL was not distributed with this
+    - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="20" height="20">
+-  <circle fill="#8000D7" cx="10" cy="10" r="9.5"/>
+-  <path fill="#FFFFFF" d="M17.436 7.357c-1.429-1.876-4.235-2.116-5.982-.511l-.977.898-.957 0-.977-.898c-1.748-1.605-4.554-1.365-5.983.511-.185.731.101 3.431.263 3.856.325 1.715 1.727 3.005 3.408 3.005.839 0 1.599-.335 2.2-.871l.366-.313a1.813 1.813 0 0 1 2.354-.019l.55.456 0-.002c.579.466 1.289.751 2.065.751 1.68 0 3.082-1.29 3.408-3.005.161-.427.457-3.115.262-3.858z"/>
+-  <path fill="#8000D7" d="M6.625 8.553c-.697 0-1.317.291-1.717.743a.65.65 0 0 0 0 .848c.4.452 1.02.743 1.717.743s1.317-.291 1.717-.743a.65.65 0 0 0 0-.848c-.4-.452-1.02-.743-1.717-.743z"/>
+-  <path fill="#8000D7" d="M13.375 8.553c-.697 0-1.317.291-1.717.743a.65.65 0 0 0 0 .848c.4.452 1.02.743 1.717.743.697 0 1.317-.291 1.717-.743a.65.65 0 0 0 0-.848c-.4-.452-1.02-.743-1.717-.743z"/>
++<!-- Pufferfish: a pufferfish among coral in place of Firefox's mask. Drawn
++   - from configs/branding/pufferfish/logo-private.svg. -->
++<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="20" height="20" fill="none">
++  <defs>
++    <clipPath id="disc"><circle cx="50" cy="50" r="48"/></clipPath>
++  </defs>
++  <circle cx="50" cy="50" r="48" fill="#7338E2"/>
++  <g clip-path="url(#disc)">
++    <!-- Coral behind the fish. -->
++    <g stroke="#C85A3E" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round" fill="none">
++      <path d="M17 100 V62 L9 46 M17 62 L25 42 M17 78 L7 71"/>
++      <path d="M83 100 V60 L92 44 M83 60 L75 38 M83 78 L93 72"/>
++    </g>
++    <!-- The pufferfish, the same drawing as the main logo. -->
++    <g transform="translate(50 45) scale(0.78) translate(-50 -50)">
++      <g fill="#FFFFFF">
++        <polygon points="46.5,21 50,11 53.5,21"/>
++        <polygon points="46.5,21 50,11 53.5,21" transform="rotate(36 50 50)"/>
++        <polygon points="46.5,21 50,11 53.5,21" transform="rotate(72 50 50)"/>
++        <polygon points="46.5,21 50,11 53.5,21" transform="rotate(108 50 50)"/>
++        <polygon points="46.5,21 50,11 53.5,21" transform="rotate(144 50 50)"/>
++        <polygon points="46.5,21 50,11 53.5,21" transform="rotate(180 50 50)"/>
++        <polygon points="46.5,21 50,11 53.5,21" transform="rotate(216 50 50)"/>
++        <polygon points="46.5,21 50,11 53.5,21" transform="rotate(324 50 50)"/>
++        <path d="M23 50 L11 40 Q8.5 50 11 60Z"/>
++        <circle cx="50" cy="50" r="29"/>
++      </g>
++      <path d="M22.13 58 Q34 50 50 57 T78.57 55 A29 29 0 0 1 22.13 58Z" fill="#E4D6FF"/>
++      <path d="M47 44 q-6 7 0 14" stroke="#7338E2" stroke-width="2.6" fill="none" stroke-linecap="round"/>
++      <circle cx="68" cy="44" r="3.8" fill="#2B1066"/>
++      <circle cx="69.3" cy="42.7" r="1.1" fill="#FFFFFF"/>
++      <path d="M72.5 56 q3.5 1.5 6 -1.5" stroke="#2B1066" stroke-width="2.4" fill="none" stroke-linecap="round"/>
++    </g>
++    <!-- Coral in front, hiding most of the fish below its eye. -->
++    <g stroke="#F28C6B" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none">
++      <path d="M31 100 V68 L21 51 M31 68 L40 50 M31 84 L20 77"/>
++      <path d="M68 100 V66 L59 50 M68 66 L80 51 M68 83 L79 77"/>
++      <path d="M50 100 V72 L43 58 M50 72 L57 59 M50 86 L58 81"/>
++    </g>
++  </g>
+ </svg>

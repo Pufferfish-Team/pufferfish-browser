@@ -1,0 +1,13 @@
+diff --git a/browser/themes/shared/privatebrowsing/fox-tail.svg b/browser/themes/shared/privatebrowsing/fox-tail.svg
+index 3036ec59ac00b8b06f40e4620111446a56099a72..48bbf332402226aa373e44348498649411a89641 100644
+--- a/browser/themes/shared/privatebrowsing/fox-tail.svg
++++ b/browser/themes/shared/privatebrowsing/fox-tail.svg
+@@ -1,4 +1,6 @@
+ <!-- This Source Code Form is subject to the terms of the Mozilla Public
+    - License, v. 2.0. If a copy of the MPL was not distributed with this
+    - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+-<svg xmlns="http://www.w3.org/2000/svg" width="1398" height="840" fill="none" preserveAspectRatio="xMaxYMax slice" viewBox="0 0 1398 840"><g clip-path="url(#a)"><path fill="#000" fill-opacity=".25" d="M1433 880H361.558C232.959 725.719 182.431 563.135 182.354 562.886c0 0 255.5 141.276 517.966 53.675 126.576-42.206 246.287-142.363 423.38-222.411 16.09-7.267 55.98-21.156 55.98-21.156s-15.33-4.674-38.58-12.08c-24.53-7.796-40.03-11.149-40.03-11.149s39.32-16.502 73.53-25.167c26.53-6.708 59.88-14.542 107.86-22.832 51.74-8.94 98.84-15.182 150.54-17.246z"/></g><defs><clipPath id="a"><path fill="#fff" d="M0 0h1398v840H0z"/></clipPath></defs></svg>
+\ No newline at end of file
++<!-- Pufferfish: a pufferfish among coral in place of Firefox's mask. Drawn
++   - from configs/branding/pufferfish/logo-private.svg. -->
++<svg xmlns="http://www.w3.org/2000/svg" width="1398" height="840" fill="none" preserveAspectRatio="xMaxYMax slice" viewBox="0 0 1398 840"><g stroke="#000" stroke-opacity=".25" stroke-width="44" stroke-linecap="round" stroke-linejoin="round"><path d="M1110 880V640L1030 520M1110 640L1190 500M1110 760L1030 715M1190 500L1170 430M1190 500L1250 450"/><path d="M1300 880V600L1250 480M1300 600L1380 470M1300 720L1370 680"/><path d="M960 880V760L910 690M960 760L1010 700"/></g><g fill="#000" fill-opacity=".25"><circle cx="1020" cy="420" r="20"/><circle cx="1060" cy="350" r="12"/><circle cx="1030" cy="300" r="7"/></g></svg>
