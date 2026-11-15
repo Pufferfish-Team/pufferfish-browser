@@ -1,14 +1,17 @@
 {
-  "name": "browser",
-  "version": "1.0.0",
-  "description": "",
+  "name": "pufferfish-browser",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Pufferfish, a web browser built on Firefox",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "import": "node tools/import.js",
+    "fix-branding": "node tools/fix-branding.js",
+    "branding:icons": "node tools/generate-branding.js"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Pufferfish Team",
+  "license": "MPL-2.0",
   "type": "commonjs",
   "devDependencies": {
     "@zen-browser/surfer": "^1.14.9"
