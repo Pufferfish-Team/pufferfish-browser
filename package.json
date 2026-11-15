@@ -8,7 +8,8 @@
     "import": "node tools/import.js",
     "fix-branding": "node tools/fix-branding.js",
     "branding:icons": "node tools/generate-branding.js",
-    "prepare-update": "node tools/prepare-update.js"
+    "prepare-update": "node tools/prepare-update.js",
+    "package": "node tools/package.js"
   },
   "keywords": [],
   "author": "Pufferfish Team",

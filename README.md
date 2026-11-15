@@ -106,7 +106,7 @@ To make a release:
 
    ```bash
    npx surfer build
-   npx surfer package
+   npm run package
    ```
 
 3. Sign the update package and write `update.xml`:

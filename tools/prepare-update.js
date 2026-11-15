@@ -1,4 +1,4 @@
-// Prepares a Pufferfish release's update files, after `npx surfer package`:
+// Prepares a Pufferfish release's update files, after `npm run package`:
 //
 //   npm run prepare-update
 //
