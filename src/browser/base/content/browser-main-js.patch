@@ -1,0 +1,12 @@
+diff --git a/browser/base/content/browser-main.js b/browser/base/content/browser-main.js
+index 89ebf874267639dd85d9ddf9a828760afacb4869..c57a46160cb05ff4fbfd51c896b905087383fa9e 100644
+--- a/browser/base/content/browser-main.js
++++ b/browser/base/content/browser-main.js
+@@ -23,6 +23,7 @@
+   Services.scriptloader.loadSubScript("chrome://browser/content/tabbrowser/status-panel.js", this);
+   ChromeUtils.importESModule("chrome://browser/content/tabbrowser/tab.mjs", { global: "current" });
+   Services.scriptloader.loadSubScript("chrome://browser/content/tabbrowser/tab-bar-visibility.js", this);
++  Services.scriptloader.loadSubScript("chrome://browser/content/tabbrowser/pufferfish-tab-dock.js", this);
+   Services.scriptloader.loadSubScript("chrome://browser/content/tabbrowser/tab-context-menu.js", this);
+   ChromeUtils.importESModule("chrome://browser/content/tabbrowser/tabgroup.mjs", { global: "current" });
+   Services.scriptloader.loadSubScript("chrome://browser/content/tabbrowser/tabgroup-menu.js", this);

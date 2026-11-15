@@ -1,0 +1,13 @@
+diff --git a/browser/components/tabbrowser/jar.mn b/browser/components/tabbrowser/jar.mn
+index 6347b3bd22084bb1bcb5fb2918841fdbe70a68b0..243ad028fdb93a967ea5e58455af5847eff5c442 100644
+--- a/browser/components/tabbrowser/jar.mn
++++ b/browser/components/tabbrowser/jar.mn
+@@ -11,6 +11,8 @@ browser.jar:
+    content/browser/tabbrowser/opentabs.html               (content/opentabs.html)
+    content/browser/tabbrowser/opentabs-splitview.css      (content/opentabs-splitview.css)
+    content/browser/tabbrowser/opentabs-splitview.mjs      (content/opentabs-splitview.mjs)
++   content/browser/tabbrowser/pufferfish-tab-dock.css     (content/pufferfish-tab-dock.css)
++   content/browser/tabbrowser/pufferfish-tab-dock.js      (content/pufferfish-tab-dock.js)
+    content/browser/tabbrowser/split-view-footer.js        (content/split-view-footer.js)
+    content/browser/tabbrowser/status-panel.js             (content/status-panel.js)
+    content/browser/tabbrowser/tab.mjs                     (content/tab.mjs)

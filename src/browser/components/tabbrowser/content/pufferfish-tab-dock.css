@@ -1,0 +1,267 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+/* Pufferfish tab dock. See pufferfish-tab-dock.js. */
+
+#browser {
+  position: relative;
+}
+
+#pufferfish-tab-dock-container {
+  --pf-dock-bg: var(--panel-background-color, Field);
+  --pf-dock-fg: var(--panel-text-color, FieldText);
+  --pf-dock-border: var(--panel-border-color, ThreeDShadow);
+  --pf-dock-accent: var(--focus-outline-color, AccentColor);
+  --pf-dock-duration: 220ms;
+
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 3;
+
+  &[hidden] {
+    display: none;
+  }
+
+  :root:is([inDOMFullscreen], [customizing]) & {
+    display: none;
+  }
+}
+
+/* The hover zone holds the handle and the dock. While closed only the
+   handle takes the mouse, so the page underneath stays clickable. */
+.pf-dock-zone {
+  position: absolute;
+  left: 50%;
+  translate: -50% 0;
+  max-width: calc(100% - 32px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-inline: 16px;
+  pointer-events: none;
+
+  #pufferfish-tab-dock-container[position="top"] & {
+    top: 0;
+    padding-bottom: 28px;
+  }
+
+  #pufferfish-tab-dock-container[position="bottom"] & {
+    bottom: 0;
+    padding-top: 28px;
+    flex-direction: column-reverse;
+  }
+
+  #pufferfish-tab-dock-container[open] & {
+    pointer-events: auto;
+  }
+}
+
+/* The handle: a small pill attached to the edge of the page, with a grip line
+   like the gesture bar on phones. */
+.pf-dock-handle {
+  position: absolute;
+  left: 50%;
+  translate: -50% 0;
+  width: 72px;
+  height: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--pf-dock-bg);
+  border: 1px solid var(--pf-dock-border);
+  pointer-events: auto;
+  cursor: default;
+  transition: opacity 150ms;
+
+  #pufferfish-tab-dock-container[position="top"] & {
+    top: 0;
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+  }
+
+  #pufferfish-tab-dock-container[position="bottom"] & {
+    bottom: 0;
+    border-bottom: none;
+    border-radius: 8px 8px 0 0;
+  }
+
+  /* A larger invisible hit area, so the small pill is easy to reach. */
+  &::before {
+    content: "";
+    position: absolute;
+    inset: -4px -16px -8px;
+  }
+
+  #pufferfish-tab-dock-container[open] & {
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+
+.pf-dock-handle-grip {
+  width: 36px;
+  height: 4px;
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--pf-dock-fg) 45%, transparent);
+
+  .pf-dock-handle:hover > & {
+    background: color-mix(in srgb, var(--pf-dock-fg) 75%, transparent);
+  }
+}
+
+/* The dock. */
+.pf-dock {
+  display: flex;
+  gap: 8px;
+  max-width: 100%;
+  padding: 8px 10px;
+  background: var(--pf-dock-bg);
+  color: var(--pf-dock-fg);
+  border: 1px solid var(--pf-dock-border);
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  opacity: 0;
+  visibility: hidden;
+
+  #pufferfish-tab-dock-container[position="top"] & {
+    align-items: flex-start;
+    margin-top: 6px;
+    transform: translateY(calc(-100% - 12px));
+    /* Room for the hovered tab's title under the thumbnails. */
+    padding-bottom: 26px;
+  }
+
+  #pufferfish-tab-dock-container[position="bottom"] & {
+    align-items: flex-end;
+    margin-bottom: 6px;
+    transform: translateY(calc(100% + 12px));
+    padding-top: 26px;
+  }
+
+  #pufferfish-tab-dock-container[open] & {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    transition:
+      transform var(--pf-dock-duration) cubic-bezier(0.2, 0.9, 0.3, 1.15),
+      opacity 150ms,
+      visibility 0s linear var(--pf-dock-duration);
+
+    #pufferfish-tab-dock-container[open] & {
+      transition:
+        transform var(--pf-dock-duration) cubic-bezier(0.2, 0.9, 0.3, 1.15),
+        opacity 150ms,
+        visibility 0s;
+    }
+  }
+}
+
+.pf-dock-item {
+  position: relative;
+  flex: none;
+  cursor: default;
+
+  @media (prefers-reduced-motion: no-preference) {
+    transition: width 80ms ease-out;
+  }
+}
+
+.pf-dock-thumb {
+  width: 100%;
+  aspect-ratio: 8 / 5;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid var(--pf-dock-border);
+  background: color-mix(in srgb, var(--pf-dock-fg) 8%, var(--pf-dock-bg));
+
+  .pf-dock-item[selected] > & {
+    border: 2px solid var(--pf-dock-accent);
+  }
+}
+
+.pf-dock-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+}
+
+.pf-dock-fallback {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  > img {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+/* The hovered tab's title, shown under (or above) its thumbnail. */
+.pf-dock-label {
+  position: absolute;
+  left: 50%;
+  translate: -50% 0;
+  max-width: 220px;
+  display: none;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.85em;
+  white-space: nowrap;
+  pointer-events: none;
+
+  #pufferfish-tab-dock-container[position="top"] & {
+    top: calc(100% + 4px);
+  }
+
+  #pufferfish-tab-dock-container[position="bottom"] & {
+    bottom: calc(100% + 4px);
+  }
+
+  .pf-dock-item:hover > & {
+    display: flex;
+  }
+}
+
+.pf-dock-label-icon {
+  width: 16px;
+  height: 16px;
+  flex: none;
+}
+
+.pf-dock-label-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pf-dock-newtab {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  align-self: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  font-size: 20px;
+  line-height: 1;
+  color: var(--pf-dock-fg);
+  border: 1px dashed var(--pf-dock-border);
+  cursor: default;
+
+  &:hover {
+    background: color-mix(in srgb, var(--pf-dock-fg) 10%, transparent);
+  }
+}

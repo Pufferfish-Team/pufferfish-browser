@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 100 100" width="32" height="32">
+  <title>Pufferfish (small sizes)</title>
+  <!-- The full logo without the pill, fish re-centered, for 16-32px. -->
+  <defs>
+    <polygon id="spike" points="46.5,21 50,11 53.5,21"/>
+  </defs>
+  <circle cx="50" cy="50" r="48" fill="#1F9BC0"/>
+  <g transform="translate(50 50) scale(0.92) translate(-50 -50)">
+    <g fill="#0E3347">
+      <use href="#spike" xlink:href="#spike"/>
+      <use href="#spike" xlink:href="#spike" transform="rotate(36 50 50)"/>
+      <use href="#spike" xlink:href="#spike" transform="rotate(72 50 50)"/>
+      <use href="#spike" xlink:href="#spike" transform="rotate(108 50 50)"/>
+      <use href="#spike" xlink:href="#spike" transform="rotate(144 50 50)"/>
+      <use href="#spike" xlink:href="#spike" transform="rotate(180 50 50)"/>
+      <use href="#spike" xlink:href="#spike" transform="rotate(216 50 50)"/>
+      <use href="#spike" xlink:href="#spike" transform="rotate(324 50 50)"/>
+      <path d="M23 50 L11 40 Q8.5 50 11 60Z"/>
+    </g>
+    <circle cx="50" cy="50" r="29" fill="#F28C6B"/>
+    <g>
+      <path d="M22.13 58 Q34 50 50 57 T78.57 55 A29 29 0 0 1 22.13 58Z" fill="#FBC4A8"/>
+      <g fill="#D9694A">
+        <circle cx="40" cy="31" r="2.6"/>
+        <circle cx="52" cy="28" r="2.1"/>
+        <circle cx="33" cy="41" r="2"/>
+        <circle cx="59" cy="34" r="1.7"/>
+      </g>
+      <g stroke="#E5967A" stroke-width="1.6" fill="none" stroke-linecap="round">
+        <path d="M38 66 l2 3 l2 -3"/>
+        <path d="M50 69 l2 3 l2 -3"/>
+        <path d="M61 66 l2 3 l2 -3"/>
+      </g>
+    </g>
+    <path d="M47 44 q-6 7 0 14" stroke="#0E3347" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+    <circle cx="68" cy="44" r="3.8" fill="#0E3347"/>
+    <circle cx="69.3" cy="42.7" r="1.1" fill="#FBC4A8"/>
+    <path d="M72.5 56 q3.5 1.5 6 -1.5" stroke="#0E3347" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+  </g>
+</svg>

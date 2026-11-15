@@ -1,0 +1,15 @@
+diff --git a/browser/base/content/browser.xhtml b/browser/base/content/browser.xhtml
+index 042a88dd68b3477a875f039e314f7cd132938687..7f7e4a9a7d8570fe77d5e0490e97e7a9b4f6321a 100644
+--- a/browser/base/content/browser.xhtml
++++ b/browser/base/content/browser.xhtml
+@@ -49,6 +49,10 @@
+   <link rel="stylesheet" href="chrome://browser/skin/translations/panel.css" />
+   <link rel="stylesheet" href="chrome://browser/skin/places/tree-icons.css" />
+   <link rel="stylesheet" href="chrome://browser/skin/places/editBookmark.css" />
++  <link
++    rel="stylesheet"
++    href="chrome://browser/content/tabbrowser/pufferfish-tab-dock.css"
++  />
+   <link
+     rel="stylesheet"
+     href="chrome://browser/skin/usercontext/container-editor.css"

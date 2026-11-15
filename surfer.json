@@ -11,7 +11,17 @@
     "windowsUseSymbolicLinks": false
   },
   "addons": {},
-  "brands": {},
+  "brands": {
+    "pufferfish": {
+      "backgroundColor": "#0E3347",
+      "brandShorterName": "Pufferfish",
+      "brandShortName": "Pufferfish",
+      "brandFullName": "Pufferfish",
+      "release": {
+        "displayVersion": "0.1.0"
+      }
+    }
+  },
   "license": {
     "ignoredFiles": [
       ".*\\.json"
