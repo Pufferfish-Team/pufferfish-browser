@@ -4,3 +4,6 @@
 engine/
 firefox-*/
 node_modules/
+
+# API keys (never commit)
+configs/keys/

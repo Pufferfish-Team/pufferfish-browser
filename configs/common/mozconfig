@@ -16,3 +16,12 @@ export MOZ_SOURCE_CHANGESET=${changeset}
 
 # Bootstrap
 ac_add_options --enable-bootstrap
+
+# API keys. These live in configs/keys, which git ignores, so they never end up
+# in the repository. Builds without a key still work; that feature just stays
+# off. Google Safe Browsing powers "Block dangerous and deceptive content".
+_pf_keys="$topsrcdir/../configs/keys"
+if [ -f "$_pf_keys/google-safebrowsing.key" ]; then
+  _pf_keys_dir="$(cd "$_pf_keys" && (pwd -W 2>/dev/null || pwd))"
+  ac_add_options --with-google-safebrowsing-api-keyfile="$_pf_keys_dir/google-safebrowsing.key"
+fi

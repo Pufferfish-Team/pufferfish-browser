@@ -1,0 +1,23 @@
+diff --git a/build/application.ini.in b/build/application.ini.in
+index 6df13230a45b2a86356f4e5a7b189c46f53e44cc..36924422f356f5f6a17d6ec0e709b6cc53eb6d09 100644
+--- a/build/application.ini.in
++++ b/build/application.ini.in
+@@ -46,11 +46,15 @@ EnableProfileMigrator=1
+ 
+ #if MOZ_CRASHREPORTER
+ [Crash Reporter]
+-Enabled=1
+-ServerURL=@MOZ_CRASHREPORTER_URL@/submit?id=@MOZ_APP_ID@&version=@MOZ_APP_VERSION@&buildid=@MOZ_BUILDID@
++#if 0
++; Pufferfish: off until Pufferfish has its own crash server. The default
++; server is Mozilla's, and reports would be filed as Firefox crashes.
++#endif
++Enabled=0
++ServerURL=
+ #endif
+ 
+ #if MOZ_UPDATER
+ [AppUpdate]
+-URL=https://@MOZ_APPUPDATE_HOST@/update/6/%PRODUCT%/%VERSION%/%BUILD_ID%/%BUILD_TARGET%/%LOCALE%/%CHANNEL%/%OS_VERSION%/%SYSTEM_CAPABILITIES%/%DISTRIBUTION%/%DISTRIBUTION_VERSION%/update.xml
++URL=https://@MOZ_APPUPDATE_HOST@/updates/browser/%BUILD_TARGET%/%CHANNEL%/update.xml
+ #endif
