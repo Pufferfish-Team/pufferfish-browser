@@ -16,17 +16,21 @@ const BRAND_DIR = path.join(
   "pufferfish"
 );
 
-// Pufferfish has no website yet, so these pages are simply turned off.
-// Put real URLs here once there is a site.
+const SITE = "https://www.pufferfishbrowser.com/";
+const RELEASES = "https://github.com/Pufferfish-Team/pufferfish-browser/releases";
+
+// Pufferfish doesn't open a welcome or "what's new" page on first run or
+// after an update. Update links go to the website (to download Pufferfish by
+// hand) and to the release notes on GitHub.
 const PREF_OVERRIDES = {
   "startup.homepage_override_url": "",
   "startup.homepage_welcome_url": "",
   "startup.homepage_welcome_url.additional": "",
-  "app.update.url.manual": "",
-  "app.update.url.details": "",
-  "app.releaseNotesURL": "",
-  "app.releaseNotesURL.aboutDialog": "",
-  "app.releaseNotesURL.prompt": "",
+  "app.update.url.manual": SITE,
+  "app.update.url.details": RELEASES,
+  "app.releaseNotesURL": RELEASES,
+  "app.releaseNotesURL.aboutDialog": RELEASES,
+  "app.releaseNotesURL.prompt": RELEASES,
 };
 
 function fixPrefs() {

@@ -90,6 +90,39 @@ npx surfer export browser/path/to/the/file.js
 Files that are new in Pufferfish (not changes to a Firefox file) live directly
 in `src/`; copy them back there after editing them in `engine/`.
 
+## Releasing
+
+Pufferfish updates itself with Firefox's built-in updater. Each copy checks
+`https://updates.pufferfishbrowser.com/updates/browser/<platform>/pufferfish/update.xml`
+and only installs update packages signed with the Pufferfish update key. The
+public certificates are in `src/toolkit/mozapps/update/updater/`; the private
+key lives in `configs/keys/update-signing/`, which git ignores, and is
+backed up outside this machine.
+
+To make a release:
+
+1. Raise `displayVersion` in `surfer.json`.
+2. Build and package:
+
+   ```bash
+   npx surfer build
+   npx surfer package
+   ```
+
+3. Sign the update package and write `update.xml`:
+
+   ```bash
+   npm run prepare-update
+   ```
+
+4. Create the GitHub release named after the version, with `dist/windows.mar`
+   and the installer attached.
+5. Deploy the update site (`wrangler deploy` in the update site folder) so
+   existing copies find the new version.
+
+To move to a newer Firefox, run `npx surfer update`, then `npm run import`,
+and fix any patches that no longer apply.
+
 ## License
 
 Pufferfish is free software under the [Mozilla Public License 2.0](LICENSE),

@@ -1,5 +1,5 @@
 diff --git a/browser/app/profile/firefox.js b/browser/app/profile/firefox.js
-index 15a12b67bde1501b2070a19c77a6676943bc1df9..ab405ae90749ccd59d599a16b5e20cc0c1cbc61d 100644
+index 15a12b67bde1501b2070a19c77a6676943bc1df9..17dcf2f090087b99fd212525e3f7bb7fffeee848 100644
 --- a/browser/app/profile/firefox.js
 +++ b/browser/app/profile/firefox.js
 @@ -1269,7 +1269,8 @@ pref("browser.tabs.contextmenu.altstructure.enabled", false);
@@ -12,7 +12,7 @@ index 15a12b67bde1501b2070a19c77a6676943bc1df9..ab405ae90749ccd59d599a16b5e20cc0
  
  // How many tab thumbnails to show in the ctrl-tab panel, clamped to [4, 49].
  // Only relevant when browser.ctrlTab.sortByRecentlyUsed is true.
-@@ -3909,3 +3910,92 @@ pref("distribution.mozillaonline.ignore", true);
+@@ -3909,3 +3910,93 @@ pref("distribution.mozillaonline.ignore", true);
  #ifdef XP_MACOSX
    pref("browser.macAppMenu.setAsDefaultShown", false);
  #endif
@@ -88,9 +88,10 @@ index 15a12b67bde1501b2070a19c77a6676943bc1df9..ab405ae90749ccd59d599a16b5e20cc0
 +// private windows, instead of the engine (and Mozilla partner code) Mozilla's
 +// search configuration picks for Firefox. See SearchService.sys.mjs.
 +pref("pufferfish.search.defaultEngineId", "ddg");
-+// The update section in Settings stays hidden until Pufferfish has its own
-+// update server.
-+pref("pufferfish.updates.enabled", false);
++// Show the Updates section in Settings. Pufferfish's updates come from
++// updates.pufferfishbrowser.com (surfer.json, updateHostname), signed with the
++// Pufferfish update key.
++pref("pufferfish.updates.enabled", true);
 +
 +// Help links: features that come from Firefox keep Mozilla's help articles,
 +// which describe them accurately. Feedback goes to Pufferfish, since ideas

@@ -7,3 +7,6 @@ node_modules/
 
 # API keys (never commit)
 configs/keys/
+
+# Build output from surfer package
+dist/

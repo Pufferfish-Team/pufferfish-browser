@@ -3,6 +3,7 @@
   "vendor": "Pufferfish Team",
   "appId": "com.pufferfish.browser",
   "binaryName": "pufferfish-browser",
+  "updateHostname": "updates.pufferfishbrowser.com",
   "version": {
     "product": "firefox",
     "version": "160.0"
@@ -18,7 +19,10 @@
       "brandShortName": "Pufferfish",
       "brandFullName": "Pufferfish",
       "release": {
-        "displayVersion": "0.1.0"
+        "displayVersion": "0.1.0",
+        "github": {
+          "repo": "Pufferfish-Team/pufferfish-browser"
+        }
       }
     }
   },
