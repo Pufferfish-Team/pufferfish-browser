@@ -1,0 +1,18 @@
+diff --git a/browser/components/preferences/preferences.js b/browser/components/preferences/preferences.js
+index df1663c5a74c8486b3342a53a58bf62dc9e3963c..88b9ceba4f8940ddb82de63fb6c25b8ae7b68f69 100644
+--- a/browser/components/preferences/preferences.js
++++ b/browser/components/preferences/preferences.js
+@@ -254,6 +254,13 @@ var gCurrentHistoryEntryId = null;
+  * @type {Record<string, SettingPaneConfig>}
+  */
+ const CONFIG_PANES = Object.freeze({
++  // Pufferfish: settings for Pufferfish's own features (Settings > Pufferfish).
++  pufferfish: {
++    l10nId: "pufferfish-pane-header",
++    iconSrc: "chrome://browser/skin/sidebar/firefox.svg",
++    groupIds: ["puffDock"],
++    module: "chrome://browser/content/preferences/config/pufferfish.mjs",
++  },
+   about: {
+     l10nId: "about-firefox-header",
+     iconSrc: "chrome://browser/skin/sidebar/firefox.svg",

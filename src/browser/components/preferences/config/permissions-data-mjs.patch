@@ -1,0 +1,17 @@
+diff --git a/browser/components/preferences/config/permissions-data.mjs b/browser/components/preferences/config/permissions-data.mjs
+index 375f4f051cf38af073eeaf56d419807d793d1489..c2c5af07f418117e5e5ab52813b6a66297c69e7a 100644
+--- a/browser/components/preferences/config/permissions-data.mjs
++++ b/browser/components/preferences/config/permissions-data.mjs
+@@ -318,8 +318,11 @@ Preferences.addSetting({
+ Preferences.addSetting({
+   id: "dataCollectionCategory",
+   deps: ["privacySegmentation"],
++  // Pufferfish: only show data collection settings when this build actually
++  // uploads telemetry. Pufferfish doesn't, and its studies and crash reports
++  // are turned off, so these checkboxes would only mislead.
+   visible: ({ privacySegmentation }) =>
+-    lazy.AppConstants.MOZ_DATA_REPORTING || privacySegmentation.value,
++    lazy.AppConstants.MOZ_TELEMETRY_REPORTING || privacySegmentation.value,
+ });
+ Preferences.addSetting({
+   id: "dataCollectionLink",

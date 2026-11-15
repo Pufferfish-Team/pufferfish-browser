@@ -1,0 +1,24 @@
+diff --git a/browser/components/preferences/preferences.xhtml b/browser/components/preferences/preferences.xhtml
+index 8e0c6483d6edd587cc425abe16f4a756f88e492b..dc5e2ce267c9420fc741d708b5c8a0bbeadc01f8 100644
+--- a/browser/components/preferences/preferences.xhtml
++++ b/browser/components/preferences/preferences.xhtml
+@@ -46,6 +46,7 @@
+   <link rel="localization" href="browser/preferences/fonts.ftl"/>
+   <link rel="localization" href="browser/preferences/moreFromMozilla.ftl"/>
+   <link rel="localization" href="browser/preferences/preferences.ftl"/>
++  <link rel="localization" href="browser/preferences/pufferfish.ftl"/>
+   <link rel="localization" href="toolkit/branding/brandings.ftl"/>
+   <link rel="localization" href="toolkit/firefoxlabs/features.ftl"/>
+   <link rel="localization" href="toolkit/global/mozPageHeader.ftl"/>
+@@ -129,6 +130,11 @@
+         iconsrc="chrome://browser/skin/preferences/category-sync.svg"
+         data-l10n-id="pane-sync-title3">
+       </html:moz-page-nav-button>
++      <html:moz-page-nav-button id="category-pufferfish"
++        view="panePufferfish"
++        iconsrc="chrome://browser/skin/sidebar/firefox.svg"
++        data-l10n-id="pane-pufferfish-title">
++      </html:moz-page-nav-button>
+       <html:moz-page-nav-button id="category-home"
+         view="paneHome"
+         iconsrc="chrome://browser/skin/home.svg"
