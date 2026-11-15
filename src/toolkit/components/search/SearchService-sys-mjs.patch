@@ -1,0 +1,27 @@
+diff --git a/toolkit/components/search/SearchService.sys.mjs b/toolkit/components/search/SearchService.sys.mjs
+index 96685fa2fe22eb6256e6cda99b1cf1c0a3c7bee3..3765176927db808a8ca14a860fd573bdd2564b3b 100644
+--- a/toolkit/components/search/SearchService.sys.mjs
++++ b/toolkit/components/search/SearchService.sys.mjs
+@@ -2860,6 +2860,22 @@ export const SearchService = new (class SearchService {
+   #setDefaultFromSelector(refinedConfig) {
+     this.#searchDefault = refinedConfig.appDefaultEngineId;
+     this.#searchPrivateDefault = refinedConfig.appPrivateDefaultEngineId;
++
++    // Pufferfish: Mozilla's search configuration picks a default engine (and
++    // partner code) per region for Firefox. Use the engine Pufferfish names
++    // instead, for normal and private windows, when it is available in this
++    // region. Users can still pick any engine in settings.
++    let pufferfishDefault = Services.prefs.getStringPref(
++      "pufferfish.search.defaultEngineId",
++      ""
++    );
++    if (
++      pufferfishDefault &&
++      refinedConfig.engines.some(e => e.identifier == pufferfishDefault)
++    ) {
++      this.#searchDefault = pufferfishDefault;
++      this.#searchPrivateDefault = pufferfishDefault;
++    }
+   }
+ 
+   #saveSortedEngineList() {

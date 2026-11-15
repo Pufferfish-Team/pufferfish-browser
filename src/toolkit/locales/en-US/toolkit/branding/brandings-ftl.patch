@@ -1,0 +1,54 @@
+diff --git a/toolkit/locales/en-US/toolkit/branding/brandings.ftl b/toolkit/locales/en-US/toolkit/branding/brandings.ftl
+index a7cd6c416c011c884f67d1f695b0066e72b09d21..134efee479c319f33b60e52b813d6fd5e1dbff48 100644
+--- a/toolkit/locales/en-US/toolkit/branding/brandings.ftl
++++ b/toolkit/locales/en-US/toolkit/branding/brandings.ftl
+@@ -13,6 +13,10 @@
+ ##
+ ## For further details, consult:
+ ## https://mozilla-l10n.github.io/styleguides/mozilla_general/#brands-copyright-and-trademark
++##
++## Pufferfish: features built into the browser are named after Pufferfish
++## (or have no brand). Names of Mozilla's own products and services, such as
++## Firefox Relay and Firefox Monitor, are left as they are.
+ 
+ -facebook-container-brand-name = Facebook Container
+ -monitor-brand-name = Firefox Monitor
+@@ -20,10 +24,10 @@
+ -mozmonitor-brand-name = Mozilla Monitor
+ -pocket-brand-name = Pocket
+ -send-brand-name = Firefox Send
+--screenshots-brand-name = Firefox Screenshots
++-screenshots-brand-name = Screenshots
+ -mozilla-vpn-brand-name = Mozilla VPN
+ -profiler-brand-name = Firefox Profiler
+--translations-brand-name = Firefox Translations
++-translations-brand-name = Translations
+ -relay-brand-name = Firefox Relay
+ -relay-brand-short-name = Relay
+ -fakespot-brand-name = Fakespot
+@@ -43,21 +47,21 @@
+ 
+ # “Suggest” can be localized, “Firefox” must be treated as a brand
+ # and kept in English.
+--firefox-suggest-brand-name = Firefox Suggest
++-firefox-suggest-brand-name = Pufferfish Suggest
+ 
+ # ”Home" can be localized, “Firefox” must be treated as a brand
+ # and kept in English.
+--firefox-home-brand-name = Firefox Home
++-firefox-home-brand-name = Pufferfish Home
+ 
+ # View" can be localized, “Firefox” must be treated as a brand
+ # and kept in English.
+--firefoxview-brand-name = Firefox View
++-firefoxview-brand-name = Pufferfish View
+ 
+ # Firefox Labs is the name for a page in Settings to allow users to learn about
+ # experimental and in-development features, and turn those features on and off.
+ # The "Labs" portion can be localized, “Firefox” must be treated as a brand
+ # and kept in English.
+--firefoxlabs-brand-name = Firefox Labs
++-firefoxlabs-brand-name = Pufferfish Labs
+ 
+ -smart-window-brand-name =
+     { $plural-form ->

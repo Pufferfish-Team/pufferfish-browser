@@ -1,0 +1,20 @@
+diff --git a/browser/extensions/newtab/lib/TopSitesFeed.sys.mjs b/browser/extensions/newtab/lib/TopSitesFeed.sys.mjs
+index 3510f65e71cd4f250f5fc6b591e0096ee5276015..ede22619c9b8f55e20e2e2381db54df0ccf193a2 100644
+--- a/browser/extensions/newtab/lib/TopSitesFeed.sys.mjs
++++ b/browser/extensions/newtab/lib/TopSitesFeed.sys.mjs
+@@ -1262,7 +1262,14 @@ export class TopSitesFeed {
+         link.url_urlbar = siteData.url_urlbar_override;
+       }
+       if (siteData.title) {
+-        link.label = siteData.title;
++        // Pufferfish: Mozilla's shortcut list names some sites after Firefox
++        // ("Add-ons for Firefox"); use the browser's own name instead.
++        link.label = siteData.title.replace(
++          /\bFirefox\b/g,
++          Services.strings
++            .createBundle("chrome://branding/locale/brand.properties")
++            .GetStringFromName("brandShortName")
++        );
+       }
+       if (siteData.search_shortcut) {
+         link = await this.topSiteToSearchTopSite(link);

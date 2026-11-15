@@ -1,5 +1,5 @@
 diff --git a/browser/app/profile/firefox.js b/browser/app/profile/firefox.js
-index 15a12b67bde1501b2070a19c77a6676943bc1df9..8964fa376a0a2bd314a5cecb2f056602e6cb0eb1 100644
+index 15a12b67bde1501b2070a19c77a6676943bc1df9..ab405ae90749ccd59d599a16b5e20cc0c1cbc61d 100644
 --- a/browser/app/profile/firefox.js
 +++ b/browser/app/profile/firefox.js
 @@ -1269,7 +1269,8 @@ pref("browser.tabs.contextmenu.altstructure.enabled", false);
@@ -12,7 +12,7 @@ index 15a12b67bde1501b2070a19c77a6676943bc1df9..8964fa376a0a2bd314a5cecb2f056602
  
  // How many tab thumbnails to show in the ctrl-tab panel, clamped to [4, 49].
  // Only relevant when browser.ctrlTab.sortByRecentlyUsed is true.
-@@ -3909,3 +3910,11 @@ pref("distribution.mozillaonline.ignore", true);
+@@ -3909,3 +3910,92 @@ pref("distribution.mozillaonline.ignore", true);
  #ifdef XP_MACOSX
    pref("browser.macAppMenu.setAsDefaultShown", false);
  #endif
@@ -24,3 +24,84 @@ index 15a12b67bde1501b2070a19c77a6676943bc1df9..8964fa376a0a2bd314a5cecb2f056602
 +// the address bar) or "bottom" (bottom of the window).
 +pref("pufferfish.tabs.dock.enabled", true);
 +pref("pufferfish.tabs.dock.position", "top");
++// Mute (top-left) and close (top-right) buttons on Puff Dock thumbnails.
++pref("pufferfish.tabs.dock.showMuteButton", true);
++pref("pufferfish.tabs.dock.showCloseButton", true);
++// Grow thumbnails near the mouse, like the macOS Dock.
++pref("pufferfish.tabs.dock.magnify", true);
++// Skip the dock's slide and zoom animations. They are also skipped when the
++// OS asks for less motion, whatever this is set to.
++pref("pufferfish.tabs.dock.reduceMotion", false);
++
++// Pufferfish: things that belong to Mozilla, not to a fork.
++//
++// Data reporting. This build doesn't upload telemetry, but these also gate
++// Mozilla's studies and experiments, so keep them off.
++pref("datareporting.policy.dataSubmissionEnabled", false);
++pref("datareporting.healthreport.uploadEnabled", false);
++pref("datareporting.usage.uploadEnabled", false);
++// Studies and experiments (Normandy and Nimbus) would run Mozilla's
++// experiments, which target Firefox.
++pref("app.normandy.enabled", false);
++pref("app.shield.optoutstudies.enabled", false);
++pref("nimbus.rollouts.enabled", false);
++// Crash reports would go to Mozilla's crash server; see application.ini.
++pref("breakpad.reportURL", "");
++pref("browser.crashReports.unsubmittedCheck.enabled", false);
++// Firefox checks at startup whether the build is old enough to need an
++// update. Pufferfish has no update server, and the Pufferfish branding has no
++// app.update.checkInstallTime.days, so the check threw an error. That error
++// stopped the rest of startup, which left the new tab page blank. Turn the
++// check off, and give the setting a value in case anything reads it.
++pref("app.update.checkInstallTime", false);
++pref("app.update.checkInstallTime.days", 63);
++pref("browser.crashReports.unsubmittedCheck.autoSubmit2", false);
++// Sponsored content on the new tab page and in shortcuts comes from Mozilla's
++// ad partners.
++pref("browser.newtabpage.activity-stream.showSponsored", false);
++pref("browser.newtabpage.activity-stream.showSponsoredTopSites", false);
++pref("browser.newtabpage.activity-stream.system.showSponsored", false);
++pref("browser.topsites.contile.enabled", false);
++// Promotions for Mozilla's own products.
++pref("browser.preferences.moreFromMozilla", false);
++pref("browser.vpn_promo.enabled", false);
++pref("browser.promo.pin.enabled", false);
++pref("browser.contentblocking.report.show_mobile_app", false);
++pref("identity.fxaccounts.toolbar.pxiToolbarEnabled", false);
++pref("signon.firefoxRelay.feature", "disabled");
++// Mozilla's recommendations of extensions and features.
++pref("browser.newtabpage.activity-stream.asrouter.userprefs.cfr.addons", false);
++pref("browser.newtabpage.activity-stream.asrouter.userprefs.cfr.features", false);
++pref("extensions.htmlaboutaddons.recommendations.enabled", false);
++pref("browser.discovery.enabled", false);
++// Mozilla's onboarding: the welcome screens on first run, and the pop-ups,
++// tips and messages that ASRouter shows (its built-in onboarding messages,
++// and the ones Mozilla sends from its servers). They are written for Firefox
++// and point to Mozilla's products and accounts.
++pref("browser.aboutwelcome.enabled", false);
++pref("browser.newtabpage.activity-stream.asrouter.providers.onboarding", "{\"id\":\"onboarding\",\"type\":\"local\",\"localProvider\":\"OnboardingMessageProvider\",\"enabled\":false,\"exclude\":[]}");
++pref("browser.newtabpage.activity-stream.asrouter.providers.cfr", "{\"id\":\"cfr\",\"enabled\":false,\"type\":\"remote-settings\",\"collection\":\"cfr\",\"updateCycleInMs\":3600000}");
++pref("browser.newtabpage.activity-stream.asrouter.providers.message-groups", "{\"id\":\"message-groups\",\"enabled\":false,\"type\":\"remote-settings\",\"collection\":\"message-groups\",\"updateCycleInMs\":3600000}");
++pref("browser.newtabpage.activity-stream.asrouter.providers.messaging-experiments", "{\"id\":\"messaging-experiments\",\"enabled\":false,\"type\":\"remote-experiments\",\"updateCycleInMs\":3600000}");
++
++// Search: DuckDuckGo is the default engine in every region, in normal and
++// private windows, instead of the engine (and Mozilla partner code) Mozilla's
++// search configuration picks for Firefox. See SearchService.sys.mjs.
++pref("pufferfish.search.defaultEngineId", "ddg");
++// The update section in Settings stays hidden until Pufferfish has its own
++// update server.
++pref("pufferfish.updates.enabled", false);
++
++// Help links: features that come from Firefox keep Mozilla's help articles,
++// which describe them accurately. Feedback goes to Pufferfish, since ideas
++// sent to Mozilla wouldn't reach the Pufferfish Team. Pufferfish's own
++// features link to pufferfishbrowser.com (see config/pufferfish.mjs).
++pref("app.feedback.baseURL", "https://www.pufferfishbrowser.com/");
++
++// Safe Browsing: Google only gives the download-protection lists (and the
++// download check service) to Mozilla's own key. Google fetches all lists in
++// one request, so asking for those two makes the whole update fail and no
++// phishing or malware list ever arrives. Leave them out.
++pref("urlclassifier.downloadBlockTable", "");
++pref("urlclassifier.downloadAllowTable", "");
++pref("browser.safebrowsing.downloads.remote.enabled", false);

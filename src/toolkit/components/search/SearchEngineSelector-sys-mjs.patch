@@ -1,0 +1,104 @@
+diff --git a/toolkit/components/search/SearchEngineSelector.sys.mjs b/toolkit/components/search/SearchEngineSelector.sys.mjs
+index 8c2a5b482601ac4dfa21c0a35bab82bf9fec469d..e3f2283881bbb6ae4bccd2073abaaddbd2ab7153 100644
+--- a/toolkit/components/search/SearchEngineSelector.sys.mjs
++++ b/toolkit/components/search/SearchEngineSelector.sys.mjs
+@@ -38,6 +38,81 @@ const lazy = XPCOMUtils.declareLazy({
+     }),
+ });
+ 
++/**
++ * Pufferfish: removes Mozilla's search partner codes and attribution tags.
++ *
++ * Firefox's search engine list fills a {partnerCode} slot in each engine's
++ * address with a code from Mozilla's search deals (for example
++ * client=firefox-b-d on Google), and adds tags such as form=MOZLBR. Those
++ * belong to Mozilla, so Pufferfish strips them. This runs on the built-in
++ * list and on every update downloaded later, so updates can't bring them back.
++ *
++ * The walk is generic, so it keeps working if the list's layout changes.
++ *
++ * @param {any} value
++ *   The search configuration, or any part of it.
++ * @returns {any}
++ *   The same value with partner codes and attribution parameters removed.
++ */
++function pufferfishStripPartnerCodes(value) {
++  const MOZILLA_TAG = /moz|firefox/i;
++  // Affiliate and campaign tracking that goes with Mozilla's deals (eBay
++  // Partner Network, and campaign IDs such as cmpid=fre_partner_fire_...).
++  const AFFILIATE_PARAMS = [
++    "campid",
++    "toolid",
++    "mkevt",
++    "mkcid",
++    "mkrid",
++    "cmpid",
++  ];
++  const isAttributionParam = param =>
++    param &&
++    typeof param == "object" &&
++    (AFFILIATE_PARAMS.includes(param.name) ||
++    // Filled from the partner code, e.g. client={partnerCode}.
++    ((typeof param.value == "string" &&
++      (param.value.includes("{partnerCode}") ||
++        MOZILLA_TAG.test(param.value))) ||
++      // Set by Mozilla experiments or for enterprise installs (Google's
++      // "channel").
++      "experimentConfig" in param ||
++      "enterpriseValue" in param));
++
++  if (Array.isArray(value)) {
++    return value.map(pufferfishStripPartnerCodes);
++  }
++  if (!value || typeof value != "object") {
++    return value;
++  }
++  let result = {};
++  for (let [key, child] of Object.entries(value)) {
++    if (key == "partnerCode") {
++      // Kept as an empty string rather than removed, in case the selector
++      // requires the field.
++      result[key] = "";
++    } else if (key == "partner" && child && typeof child == "object") {
++      // The newer (v3) layout: one code per search entry point, e.g.
++      // { default: { code: "MOZI" }, newtab: { code: ... } }.
++      result[key] = Object.fromEntries(
++        Object.entries(child).map(([entryPoint, info]) => [
++          entryPoint,
++          info && typeof info == "object"
++            ? { ...pufferfishStripPartnerCodes(info), code: "" }
++            : info,
++        ])
++      );
++    } else if (key == "params" && Array.isArray(child)) {
++      result[key] = child
++        .filter(param => !isAttributionParam(param))
++        .map(pufferfishStripPartnerCodes);
++    } else {
++      result[key] = pufferfishStripPartnerCodes(child);
++    }
++  }
++  return result;
++}
++
+ /**
+  * SearchEngineSelector parses the JSON configuration for
+  * search engines and returns the applicable engines depending
+@@ -378,7 +453,7 @@ export class SearchEngineSelector {
+       // Now call this again.
+       return this.#getConfiguration(false);
+     }
+-    return result;
++    return pufferfishStripPartnerCodes(result);
+   }
+ 
+   /**
+@@ -396,7 +471,7 @@ export class SearchEngineSelector {
+    *   The new configuration object
+    */
+   _onConfigurationUpdated({ data: { current } }) {
+-    this.#configuration = current;
++    this.#configuration = pufferfishStripPartnerCodes(current);
+ 
+     if (lazy.SearchUtils.configV3FeatureGate) {
+       this.#selector.setSearchConfigV3(
