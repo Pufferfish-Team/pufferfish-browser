@@ -2,14 +2,17 @@
 //
 //   npm run prepare-update
 //
-// 1. Signs the update package (dist/output.mar) with the Pufferfish update
-//    key in configs/keys/update-signing, and checks the signature against the
-//    certificate built into Pufferfish. Pufferfish refuses unsigned updates.
-// 2. Saves it as dist/windows.mar, the name the GitHub release must use.
-// 3. Runs `surfer updates-browser`, which writes update.xml with the signed
-//    package's size and checksum and its GitHub download address.
-// 4. Copies update.xml into the update site folder (../PufferfishUpdates, or
-//    the PUFFERFISH_UPDATES_DIR environment variable).
+// 1. Builds the update package (a .mar file) from the packaged browser in
+//    engine/obj-x86_64-pc-windows-msvc/dist/pufferfish-browser. surfer's own
+//    step for this calls Mozilla's packaging script with the arguments it
+//    took before Firefox 160, so it no longer works.
+// 2. Signs it with the Pufferfish update key in configs/keys/update-signing,
+//    and checks the signature against the certificate built into Pufferfish.
+//    Pufferfish refuses unsigned updates.
+// 3. Saves it as dist/windows.mar, the name the GitHub release must use.
+// 4. Writes update.xml, with the signed package's size, checksum and GitHub
+//    download address, into the update site folder (../PufferfishUpdates,
+//    or the PUFFERFISH_UPDATES_DIR environment variable).
 //
 // It doesn't upload or deploy anything. The steps for that are printed at the
 // end.
@@ -19,11 +22,11 @@ const path = require("node:path");
 const { spawnSync } = require("node:child_process");
 
 const ROOT = path.join(__dirname, "..");
-const OBJ = path.join(ROOT, "engine", "obj-x86_64-pc-windows-msvc");
+const ENGINE = path.join(ROOT, "engine");
+const OBJ = path.join(ENGINE, "obj-x86_64-pc-windows-msvc");
 const KEYS = path.join(ROOT, "configs", "keys", "update-signing");
 const CERT = path.join(
-  ROOT,
-  "engine",
+  ENGINE,
   "toolkit",
   "mozapps",
   "update",
@@ -34,6 +37,11 @@ const DIST = path.join(ROOT, "dist");
 const UPDATES_DIR =
   process.env.PUFFERFISH_UPDATES_DIR ||
   path.join(ROOT, "..", "PufferfishUpdates");
+// The packaged browser. PUFFERFISH_STAGE_DIR overrides it for testing.
+const STAGE =
+  process.env.PUFFERFISH_STAGE_DIR ||
+  path.join(OBJ, "dist", "pufferfish-browser");
+const CHANNEL = "pufferfish";
 
 function fail(message) {
   console.error(`\n${message}`);
@@ -47,20 +55,26 @@ function run(command, args, options = {}) {
   }
 }
 
-function findMar() {
-  let saved = path.join(ROOT, ".surfer", "dynamicConfig.marPath.json");
-  if (fs.existsSync(saved)) {
-    let marPath = JSON.parse(fs.readFileSync(saved, "utf8"));
-    if (marPath && fs.existsSync(marPath)) {
-      return marPath;
+// Git Bash wants /c/... paths.
+function unixPath(p) {
+  return p.replace(/\\/g, "/").replace(/^([A-Za-z]):/, (_, d) => `/${d.toLowerCase()}`);
+}
+
+function findBash() {
+  for (let candidate of [
+    path.join(process.env.ProgramFiles || "C:\\Program Files", "Git", "bin", "bash.exe"),
+    "C:\\mozilla-build\\msys2\\usr\\bin\\bash.exe",
+  ]) {
+    if (fs.existsSync(candidate)) {
+      return candidate;
     }
   }
-  let fallback = path.join(DIST, "output.mar");
-  if (fs.existsSync(fallback)) {
-    return fallback;
-  }
-  return fail("No update package found. Run `npx surfer package` first.");
+  return fail("Git Bash wasn't found. Install Git for Windows.");
 }
+
+let surfer = JSON.parse(fs.readFileSync(path.join(ROOT, "surfer.json")));
+let version = surfer.brands.pufferfish.release.displayVersion;
+let repo = surfer.brands.pufferfish.release.github.repo;
 
 if (!fs.existsSync(path.join(KEYS, "key4.db"))) {
   fail(
@@ -69,62 +83,101 @@ if (!fs.existsSync(path.join(KEYS, "key4.db"))) {
   );
 }
 
-let signmar = path.join(OBJ, "dist", "bin", "signmar.exe");
-if (!fs.existsSync(signmar)) {
-  fail("signmar.exe isn't built. Run `npx surfer build` first.");
+let appIni = path.join(STAGE, "application.ini");
+if (!fs.existsSync(appIni)) {
+  fail(`${STAGE} doesn't exist. Run \`npx surfer package\` first.`);
+}
+let builtVersion = /^Version=(.*)$/m.exec(fs.readFileSync(appIni, "utf8"))?.[1];
+if (builtVersion?.trim() != version) {
+  fail(
+    `The packaged browser is version ${builtVersion}, but surfer.json says ` +
+      `${version}.\nRebuild and package after changing displayVersion.`
+  );
+}
+
+let binDir = path.join(OBJ, "dist", "bin");
+let hostBin = path.join(OBJ, "dist", "host", "bin");
+let signmar = path.join(binDir, "signmar.exe");
+let mar = path.join(hostBin, "mar.exe");
+for (let tool of [signmar, mar]) {
+  if (!fs.existsSync(tool)) {
+    fail(`${path.basename(tool)} isn't built. Run \`npx surfer build\` first.`);
+  }
 }
 // signmar needs the NSS libraries next to it.
 let env = {
   ...process.env,
-  PATH: `${path.dirname(signmar)}${path.delimiter}${process.env.PATH}`,
+  PATH: `${binDir}${path.delimiter}${process.env.PATH}`,
 };
 
-let mar = findMar();
-let signed = path.join(DIST, "windows.mar");
 fs.mkdirSync(DIST, { recursive: true });
+let unsigned = path.join(DIST, "unsigned.mar");
+let signed = path.join(DIST, "windows.mar");
+fs.rmSync(unsigned, { force: true });
 fs.rmSync(signed, { force: true });
 
-console.log(`Signing ${path.relative(ROOT, mar)}...`);
+console.log(`Building the update package for Pufferfish ${version}...`);
+run(
+  findBash(),
+  [
+    unixPath(path.join(ENGINE, "tools", "update-packaging", "make_full_update.sh")),
+    "-q",
+    unixPath(unsigned),
+    unixPath(STAGE),
+    "pufferfish-browser",
+  ],
+  {
+    env: {
+      ...process.env,
+      MAR: unixPath(mar),
+      MOZ_PRODUCT_VERSION: version,
+      MAR_CHANNEL_ID: CHANNEL,
+    },
+  }
+);
+// The packaging script leaves a work folder next to the packaged browser.
+fs.rmSync(`${STAGE}.work`, { recursive: true, force: true });
+
+console.log("Signing it...");
 run(
   signmar,
-  [
-    "-d",
-    `sql:${KEYS}`,
-    "-n",
-    "pufferfish-update-primary",
-    "-s",
-    mar,
-    signed,
-  ],
+  ["-d", `sql:${KEYS}`, "-n", "pufferfish-update-primary", "-s", unsigned, signed],
   { env }
 );
+fs.rmSync(unsigned, { force: true });
 console.log("Checking the signature against Pufferfish's certificate...");
 run(signmar, ["-D", CERT, "-v", signed], { env });
 
-// surfer reads the package path from its saved config, so point it at the
-// signed copy: the checksum in update.xml must match the file users download.
-fs.writeFileSync(
-  path.join(ROOT, ".surfer", "dynamicConfig.marPath.json"),
-  JSON.stringify(signed)
-);
-
+// update.xml tells Pufferfish about the new version: where to download it,
+// and its size and checksum, which must match the signed file exactly.
+// (surfer's `updates-browser` writes "undefined" in place of the file name
+// unless it runs inside a surfer build, so this writes the file itself.)
 console.log("Writing update.xml...");
-run("npx", ["surfer", "updates-browser"], { cwd: ROOT, shell: true });
+let platformIni = fs.readFileSync(path.join(STAGE, "platform.ini"), "utf8");
+let buildID = /^BuildID=(.*)$/m.exec(platformIni)[1].trim();
+let platformVersion = /^Milestone=(.*)$/m.exec(platformIni)[1].trim();
+let hash = require("node:crypto")
+  .createHash("sha512")
+  .update(fs.readFileSync(signed))
+  .digest("hex");
+let url = `https://github.com/${repo}/releases/download/${version}/windows.mar`;
+let updateXml = `<?xml version="1.0"?>
+<updates>
+  <update type="minor" displayVersion="${version}" appVersion="${version}" platformVersion="${platformVersion}" buildID="${buildID}">
+    <patch type="complete" URL="${url}" hashFunction="sha512" hashValue="${hash}" size="${fs.statSync(signed).size}"/>
+  </update>
+</updates>
+`;
 
-let generated = path.join(DIST, "update", "browser");
-if (!fs.existsSync(generated)) {
-  fail(`surfer didn't write ${generated}.`);
-}
 if (!fs.existsSync(UPDATES_DIR)) {
   fail(`The update site folder ${UPDATES_DIR} doesn't exist.`);
 }
-let target = path.join(UPDATES_DIR, "updates", "browser");
-fs.rmSync(target, { recursive: true, force: true });
-fs.cpSync(generated, target, { recursive: true });
-
-let surfer = JSON.parse(fs.readFileSync(path.join(ROOT, "surfer.json")));
-let version = surfer.brands.pufferfish.release.displayVersion;
-let repo = surfer.brands.pufferfish.release.github.repo;
+// Firefox asks for one of these two names on 64-bit Windows.
+for (let target of ["WINNT_x86_64-msvc", "WINNT_x86_64-msvc-x64"]) {
+  let dir = path.join(UPDATES_DIR, "updates", "browser", target, CHANNEL);
+  fs.mkdirSync(dir, { recursive: true });
+  fs.writeFileSync(path.join(dir, "update.xml"), updateXml);
+}
 
 console.log(`
 Update files for Pufferfish ${version} are ready.
