@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-/* Pufferfish tab dock. See pufferfish-tab-dock.js. */
+/* Pufferfish Puff Dock and its full-screen view. See pufferfish-tab-dock.js. */
 
 #browser {
   position: relative;
@@ -128,6 +128,10 @@
   scrollbar-width: none;
   opacity: 0;
   visibility: hidden;
+  /* Keep the dock on its own layer so sliding it doesn't repaint the page. */
+  will-change: transform, opacity;
+  /* For the drop line while dragging. */
+  position: relative;
 
   #pufferfish-tab-dock-container[position="top"] & {
     align-items: flex-start;
@@ -183,8 +187,111 @@
   border: 1px solid var(--pf-dock-border);
   background: color-mix(in srgb, var(--pf-dock-fg) 8%, var(--pf-dock-bg));
 
-  .pf-dock-item[selected] > & {
+  .pf-dock-item[selected] & {
     border: 2px solid var(--pf-dock-accent);
+  }
+}
+
+/* Mute (top-left) and close (top-right) buttons on each thumbnail. */
+.pf-thumb-wrap {
+  position: relative;
+  width: 100%;
+}
+
+.pf-tab-button {
+  appearance: none;
+  position: absolute;
+  top: 4px;
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid var(--pf-dock-border);
+  background-color: color-mix(in srgb, var(--pf-dock-bg) 90%, transparent);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 12px;
+  -moz-context-properties: fill;
+  fill: currentColor;
+  color: var(--pf-dock-fg);
+  display: none;
+
+  /* Shown while the thumbnail is hovered. */
+  :is(.pf-dock-item, .pf-overview-card):hover & {
+    display: block;
+  }
+
+  &:hover {
+    background-color: color-mix(in srgb, var(--pf-dock-fg) 15%, var(--pf-dock-bg));
+  }
+}
+
+.pf-tab-mute {
+  left: 4px;
+  background-image: url("chrome://browser/skin/tabbrowser/tab-audio-playing-small.svg");
+
+  &[muted] {
+    background-image: url("chrome://browser/skin/tabbrowser/tab-audio-muted-small.svg");
+  }
+
+  &[blocked] {
+    background-image: url("chrome://browser/skin/tabbrowser/tab-audio-blocked-small.svg");
+  }
+
+  /* Tabs playing sound, muted, or waiting to play keep the button showing. */
+  &[active] {
+    display: block;
+  }
+
+  #pufferfish-tab-dock-container[hide-mute] & {
+    display: none;
+  }
+}
+
+.pf-tab-close {
+  right: 4px;
+  background-image: url("chrome://global/skin/icons/close.svg");
+  background-size: 10px;
+
+  #pufferfish-tab-dock-container[hide-close] & {
+    display: none;
+  }
+}
+
+/* Sleeping tabs: faded thumbnail with a moon badge. Loading tabs: spinner. */
+.pf-thumb-wrap[sleeping] .pf-dock-thumb {
+  opacity: 0.55;
+  filter: grayscale(0.7);
+}
+
+.pf-state-badge {
+  position: absolute;
+  right: 4px;
+  bottom: 4px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1px solid var(--pf-dock-border);
+  background-color: color-mix(in srgb, var(--pf-dock-bg) 90%, transparent);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 11px;
+  -moz-context-properties: fill;
+  fill: currentColor;
+  color: var(--pf-dock-fg);
+  pointer-events: none;
+  display: none;
+
+  .pf-thumb-wrap[sleeping] > & {
+    display: block;
+    background-image: url("chrome://global/skin/icons/moon.svg");
+  }
+
+  .pf-thumb-wrap[loading] > & {
+    display: block;
+    background-image: url("chrome://global/skin/icons/loading.svg");
+    color: var(--pf-dock-accent);
   }
 }
 
@@ -246,7 +353,228 @@
   text-overflow: ellipsis;
 }
 
-.pf-dock-newtab {
+/* Pinned tabs: small icons in a column (two rows high) at the start. */
+.pf-dock-pins {
+  flex: none;
+  display: none;
+  grid-auto-flow: column;
+  grid-template-rows: repeat(2, 30px);
+  gap: 4px;
+  align-self: center;
+  align-content: center;
+  padding-inline-end: 8px;
+  border-inline-end: 1px solid var(--pf-dock-border);
+
+  &:not(:empty) {
+    display: grid;
+  }
+
+  /* While dragging, an empty column appears as a place to pin a tab. */
+  .pf-dock[dragging] > &:empty {
+    display: grid;
+    width: 34px;
+    min-height: 64px;
+    padding: 0;
+    border: 1px dashed var(--pf-dock-border);
+    border-radius: 8px;
+  }
+
+  &[drop-target] {
+    outline: 2px dashed var(--pf-dock-accent);
+    outline-offset: 2px;
+    border-radius: 8px;
+  }
+}
+
+.pf-dock-pin {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  border: 1px solid var(--pf-dock-border);
+  background: color-mix(in srgb, var(--pf-dock-fg) 8%, var(--pf-dock-bg));
+  font-weight: 600;
+  cursor: default;
+
+  > img {
+    width: 16px;
+    height: 16px;
+  }
+
+  &:hover {
+    background: color-mix(in srgb, var(--pf-dock-fg) 16%, var(--pf-dock-bg));
+  }
+
+  &[selected] {
+    border: 2px solid var(--pf-dock-accent);
+  }
+
+  &[sleeping] > img {
+    opacity: 0.5;
+  }
+}
+
+/* A tab group: its tabs inside a box in the group's colour. The name sits in
+   its own strip outside the box (on the side away from the hovered tab's
+   title), so it never covers a thumbnail. */
+.pf-dock[has-groups] {
+  #pufferfish-tab-dock-container[position="top"] & {
+    padding-top: 26px;
+  }
+
+  #pufferfish-tab-dock-container[position="bottom"] & {
+    padding-bottom: 26px;
+  }
+}
+
+.pf-dock-group {
+  position: relative;
+  flex: none;
+  display: flex;
+  gap: 8px;
+  padding: 4px;
+  border: 1.5px solid var(--pf-group);
+  border-radius: 10px;
+  background-color: color-mix(in srgb, var(--pf-group) 12%, transparent);
+
+  #pufferfish-tab-dock-container[position="top"] & {
+    align-items: flex-start;
+  }
+
+  #pufferfish-tab-dock-container[position="bottom"] & {
+    align-items: flex-end;
+  }
+
+  &[drop-target] {
+    outline: 2px dashed var(--pf-group);
+    outline-offset: 2px;
+  }
+}
+
+.pf-dock-group-label {
+  position: absolute;
+  inset-inline-start: 6px;
+  max-width: calc(100% - 12px);
+  min-width: 24px;
+  padding: 0 8px;
+  border-radius: 8px;
+  font-size: 0.8em;
+  line-height: 18px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  background-color: var(--pf-group);
+  color: light-dark(var(--pf-group-pale), #15141a);
+  cursor: default;
+
+  #pufferfish-tab-dock-container[position="top"] & {
+    bottom: calc(100% + 3px);
+  }
+
+  #pufferfish-tab-dock-container[position="bottom"] & {
+    top: calc(100% + 3px);
+  }
+}
+
+/* A folded group: a small stack of cards with a count. */
+.pf-dock-deck {
+  position: relative;
+  flex: none;
+  aspect-ratio: 8 / 5;
+  margin: 4px 6px 0 0;
+  cursor: default;
+}
+
+.pf-dock-deck-card {
+  position: absolute;
+  inset: 0;
+  box-sizing: border-box;
+  border-radius: 6px;
+  border: 1px solid var(--pf-dock-border);
+  background: color-mix(in srgb, var(--pf-dock-fg) 8%, var(--pf-dock-bg));
+  overflow: hidden;
+
+  &.pf-dock-deck-back:nth-child(1) {
+    translate: 6px -6px;
+  }
+
+  &.pf-dock-deck-back:nth-child(2) {
+    translate: 3px -3px;
+  }
+
+  .pf-dock-deck[selected] > &:not(.pf-dock-deck-back) {
+    border: 2px solid var(--pf-dock-accent);
+  }
+
+  .pf-dock-deck:hover > & {
+    filter: brightness(1.05);
+  }
+}
+
+.pf-dock-deck-count {
+  position: absolute;
+  right: 4px;
+  bottom: 4px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  box-sizing: border-box;
+  border-radius: 9px;
+  background-color: var(--pf-group);
+  color: light-dark(var(--pf-group-pale), #15141a);
+  font-size: 0.75em;
+  line-height: 18px;
+  text-align: center;
+}
+
+/* Dragging a tab. */
+.pf-dock-item[dragging],
+.pf-dock-pin[dragging] {
+  opacity: 0.35;
+}
+
+.pf-drop-indicator {
+  position: absolute;
+  width: 3px;
+  border-radius: 2px;
+  background-color: var(--pf-dock-accent);
+  pointer-events: none;
+}
+
+.pf-drag-ghost {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 96px;
+  pointer-events: none;
+  opacity: 0.9;
+  z-index: 5;
+
+  > .pf-dock-thumb {
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+  }
+}
+
+.pf-drag-hint {
+  display: none;
+  margin-top: 4px;
+  padding: 2px 6px;
+  border-radius: 6px;
+  background-color: var(--pf-dock-accent);
+  color: var(--panel-background-color, Field);
+  font-size: 0.8em;
+  white-space: nowrap;
+  width: fit-content;
+
+  .pf-drag-ghost[new-window] > & {
+    display: block;
+  }
+}
+
+/* The "+" (new tab) and grid (full-screen view) buttons at the end. */
+.pf-dock-button {
   flex: none;
   width: 40px;
   height: 40px;
@@ -262,6 +590,299 @@
   cursor: default;
 
   &:hover {
-    background: color-mix(in srgb, var(--pf-dock-fg) 10%, transparent);
+    background-color: color-mix(in srgb, var(--pf-dock-fg) 10%, transparent);
+  }
+}
+
+.pf-dock-showall {
+  border-style: solid;
+  background-image: url("chrome://browser/skin/tabs.svg");
+  background-position: center;
+  background-size: 16px;
+  background-repeat: no-repeat;
+  -moz-context-properties: fill;
+  fill: var(--pf-dock-accent);
+}
+
+/* Toolbar button that opens the full-screen view. */
+#pufferfish-tab-overview-button {
+  list-style-image: url("chrome://browser/skin/tabs.svg");
+}
+
+/* Full-screen view: every tab in a searchable grid over the page area. */
+
+#pufferfish-tab-dock-container[overview] {
+  .pf-dock-zone {
+    display: none;
+  }
+}
+
+.pf-overview {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px 24px 14px;
+  background: var(--pf-dock-bg);
+  color: var(--pf-dock-fg);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+
+  #pufferfish-tab-dock-container[overview] & {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    transition:
+      opacity 160ms,
+      visibility 0s linear 160ms;
+
+    #pufferfish-tab-dock-container[overview] & {
+      transition:
+        opacity 160ms,
+        visibility 0s;
+    }
+  }
+}
+
+.pf-overview-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  max-width: 1200px;
+  margin-inline: auto;
+}
+
+.pf-overview-search {
+  flex: 1;
+  position: relative;
+
+  &::before {
+    content: "";
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    translate: 0 -50%;
+    width: 16px;
+    height: 16px;
+    background: url("chrome://global/skin/icons/search-glass.svg") center / contain no-repeat;
+    -moz-context-properties: fill;
+    fill: color-mix(in srgb, var(--pf-dock-fg) 60%, transparent);
+    pointer-events: none;
+  }
+}
+
+.pf-overview-input {
+  appearance: none;
+  width: 100%;
+  height: 38px;
+  margin: 0;
+  padding: 0 12px 0 36px;
+  border-radius: 19px;
+  border: 1px solid var(--pf-dock-border);
+  background: color-mix(in srgb, var(--pf-dock-fg) 6%, var(--pf-dock-bg));
+  color: inherit;
+  font: inherit;
+  font-size: 1.05em;
+  outline: none;
+
+  &:focus {
+    border-color: var(--pf-dock-accent);
+  }
+}
+
+.pf-overview-count {
+  white-space: nowrap;
+  opacity: 0.7;
+}
+
+.pf-overview-close {
+  appearance: none;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: center / 16px no-repeat url("chrome://global/skin/icons/close.svg");
+  -moz-context-properties: fill;
+  fill: currentColor;
+  color: inherit;
+}
+
+.pf-overview-close {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+
+  &:hover {
+    background-color: color-mix(in srgb, var(--pf-dock-fg) 10%, transparent);
+  }
+}
+
+.pf-overview-grid {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  width: 100%;
+  max-width: 1200px;
+  margin-inline: auto;
+  /* Room for the hover scale and focus ring at the edges. */
+  padding: 8px;
+  overflow-y: auto;
+}
+
+/* Sections: pinned tabs, each tab group, and the ungrouped tabs between. */
+.pf-overview-section {
+  &[group] {
+    padding: 10px;
+    border-radius: 12px;
+    border: 1.5px solid var(--pf-group);
+    background-color: color-mix(in srgb, var(--pf-group) 8%, transparent);
+  }
+
+  &[group][collapsed] {
+    padding-block: 6px;
+  }
+}
+
+.pf-overview-section-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  font-weight: 600;
+
+  .pf-overview-section[collapsed] > & {
+    margin-bottom: 0;
+  }
+
+  .pf-overview-section[group] > & {
+    width: fit-content;
+    cursor: default;
+  }
+}
+
+.pf-overview-section-name {
+  .pf-overview-section[group] & {
+    padding: 1px 10px;
+    border-radius: 10px;
+    background-color: var(--pf-group);
+    color: light-dark(var(--pf-group-pale), #15141a);
+  }
+}
+
+.pf-overview-section-count {
+  font-weight: normal;
+  opacity: 0.65;
+}
+
+.pf-overview-fold {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 4px;
+  background: center / 12px no-repeat url("chrome://global/skin/icons/arrow-down.svg");
+  -moz-context-properties: fill;
+  fill: currentColor;
+  color: inherit;
+
+  .pf-overview-section[collapsed] & {
+    rotate: -90deg;
+  }
+
+  &:hover {
+    background-color: color-mix(in srgb, var(--pf-dock-fg) 10%, transparent);
+  }
+}
+
+.pf-overview-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 18px;
+
+  .pf-overview-section[pinned] > & {
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  }
+}
+
+.pf-overview-card {
+  position: relative;
+  padding: 6px;
+  border-radius: 10px;
+  border: 2px solid transparent;
+  cursor: default;
+
+  @media (prefers-reduced-motion: no-preference) {
+    transition: transform 120ms ease-out;
+  }
+
+  &:hover {
+    transform: scale(1.04);
+    z-index: 1;
+  }
+
+  &[keyboard] {
+    border-color: color-mix(in srgb, var(--pf-dock-fg) 30%, transparent);
+  }
+
+  &[selected] .pf-dock-thumb {
+    border: 2px solid var(--pf-dock-accent);
+  }
+}
+
+.pf-overview-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.pf-overview-host {
+  margin-inline-start: 22px;
+  font-size: 0.85em;
+  opacity: 0.65;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pf-overview-empty {
+  grid-column: 1 / -1;
+  padding: 32px 0;
+  opacity: 0.7;
+}
+
+.pf-overview-hints {
+  text-align: center;
+  font-size: 0.85em;
+  opacity: 0.6;
+}
+
+/* Reduce motion (Puff Dock setting): the dock and full-screen view appear
+   and disappear without sliding, fading or zooming. The OS setting for less
+   motion already turns these off through the media queries above. These
+   rules come last so they win over the equally specific rules above. */
+#pufferfish-tab-dock-container[reduce-motion] :is(.pf-dock, .pf-dock-item, .pf-overview, .pf-overview-card),
+#pufferfish-tab-dock-container[reduce-motion][open] .pf-dock,
+#pufferfish-tab-dock-container[reduce-motion][overview] .pf-overview {
+  transition: none;
+}
+
+#pufferfish-tab-dock-container[reduce-motion] .pf-overview-card:hover {
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pf-overview-card:hover {
+    transform: none;
   }
 }
