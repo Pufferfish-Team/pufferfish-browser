@@ -46,12 +46,28 @@ function fixPrefs() {
   fs.writeFileSync(file, text);
 }
 
+// Links the installer writes into Windows' "Installed apps" entry, and shows
+// if a PC can't run Pufferfish.
+const INSTALLER_LINKS = {
+  URLInfoAbout: SITE,
+  URLUpdateInfo: RELEASES,
+  HelpLink: SITE,
+  URLManualDownload: SITE,
+  URLSystemRequirements: SITE,
+};
+
 function fixInstallerLinks() {
   const file = path.join(BRAND_DIR, "branding.nsi");
-  const text = fs
+  let text = fs
     .readFileSync(file, "utf8")
     .replace(/"https?:\/\/(www\.)?zen-browser\.app[^"]*"/g, '""')
     .replace(/"https:\/\/github\.com\/zen-browser\/[^"]*"/g, '""');
+  for (const [name, url] of Object.entries(INSTALLER_LINKS)) {
+    text = text.replace(
+      new RegExp(`^(!define ${name}\\s+)"[^"]*"`, "m"),
+      `$1"${url}"`
+    );
+  }
   fs.writeFileSync(file, text);
 }
 

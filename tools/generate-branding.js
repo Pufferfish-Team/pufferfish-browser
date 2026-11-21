@@ -23,6 +23,44 @@ const render = (svg, size) =>
 
 const sourceFor = size => (size <= 32 ? SMALL : FULL);
 
+// Replaces Firefox's generic installer icon (a Firefox file, so it lives in
+// src/ rather than with the brand).
+const SETUP_ICO = path.join(
+  __dirname, "..", "src", "toolkit", "mozapps", "installer", "windows", "nsis", "setup.ico"
+);
+
+// Encodes an image as a 24-bit Windows bitmap.
+async function bmp(image) {
+  const { data, info } = await image
+    .flatten({ background: "#ffffff" })
+    .removeAlpha()
+    .raw()
+    .toBuffer({ resolveWithObject: true });
+  const { width, height } = info;
+  const rowSize = Math.ceil((width * 3) / 4) * 4;
+  const out = Buffer.alloc(54 + rowSize * height);
+  out.write("BM", 0);
+  out.writeUInt32LE(out.length, 2);
+  out.writeUInt32LE(54, 10);
+  out.writeUInt32LE(40, 14);
+  out.writeInt32LE(width, 18);
+  out.writeInt32LE(height, 22);
+  out.writeUInt16LE(1, 26);
+  out.writeUInt16LE(24, 28);
+  out.writeUInt32LE(rowSize * height, 34);
+  for (let y = 0; y < height; y++) {
+    // Rows run bottom to top, with pixels in blue-green-red order.
+    const row = 54 + (height - 1 - y) * rowSize;
+    for (let x = 0; x < width; x++) {
+      const i = (y * width + x) * 3;
+      out[row + x * 3] = data[i + 2];
+      out[row + x * 3 + 1] = data[i + 1];
+      out[row + x * 3 + 2] = data[i];
+    }
+  }
+  return out;
+}
+
 // An .ico file holding PNG images (supported since Windows Vista).
 function buildIco(images) {
   const header = Buffer.alloc(6);
@@ -97,6 +135,36 @@ function buildIco(images) {
   ]) {
     fs.writeFileSync(path.join(DIR, name), await render(PRIVATE, size));
   }
+
+  // Installer artwork (24-bit BMPs, the only format the installer reads):
+  // the header strip at the top right of each page, its right-to-left copy,
+  // and the tall panel down the left of the first and last pages.
+  const header = await bmp(
+    sharp({ create: { width: 150, height: 57, channels: 3, background: "#ffffff" } })
+      .composite([{ input: await render(SMALL, 48), left: 96, top: 4 }])
+  );
+  fs.writeFileSync(path.join(DIR, "wizHeader.bmp"), header);
+  fs.writeFileSync(path.join(DIR, "wizHeaderRTL.bmp"), await bmp(
+    sharp({ create: { width: 150, height: 57, channels: 3, background: "#ffffff" } })
+      .composite([{ input: await render(SMALL, 48), left: 6, top: 4 }])
+  ));
+  const panel = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="164" height="314">
+    <defs><linearGradient id="sea" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1F9BC0"/><stop offset="1" stop-color="#0E3347"/>
+    </linearGradient></defs>
+    <rect width="164" height="314" fill="url(#sea)"/>
+    <g fill="#ffffff" fill-opacity=".18">
+      <circle cx="34" cy="236" r="9"/><circle cx="52" cy="210" r="5"/>
+      <circle cx="40" cy="186" r="3"/><circle cx="128" cy="270" r="7"/>
+      <circle cx="140" cy="246" r="4"/>
+    </g>
+  </svg>`);
+  fs.writeFileSync(path.join(DIR, "wizWatermark.bmp"), await bmp(
+    sharp(panel).composite([{ input: await render(FULL, 112), left: 26, top: 50 }])
+  ));
+
+  // The installer and uninstaller's own icon (Firefox uses a generic one).
+  fs.writeFileSync(SETUP_ICO, ico);
 
   console.log("Branding icons written to", DIR);
 })().catch(e => {
