@@ -1,0 +1,17 @@
+diff --git a/browser/moz.configure b/browser/moz.configure
+index 8979a2e4e8d92e9aa4478c397cf4891211608f24..da20b72270cb90750a8d74933468622c316464ce 100644
+--- a/browser/moz.configure
++++ b/browser/moz.configure
+@@ -13,6 +13,12 @@ imply_option("MOZ_PROFILE_MIGRATOR", True)
+ 
+ imply_option("MOZ_APP_VENDOR", "Mozilla")
+ imply_option("MOZ_APP_ID", "{ec8030f7-c20a-464f-9b0e-13a3a9e97384}")
++# Pufferfish: send websites the same user agent as Firefox ("... Gecko/20100101
++# Firefox/160.0"). Otherwise it ends in "pufferfish-browser/0.1.0", which makes
++# addons.mozilla.org offer "Download Firefox" instead of "Add to Firefox",
++# breaks other sites that check for Firefox, and makes Pufferfish users easier
++# to fingerprint. (This can't be set from mozconfig.)
++imply_option("MOZ_APP_UA_NAME", "Firefox")
+ # Include the DevTools client, not just the server (which is the default)
+ imply_option("MOZ_DEVTOOLS", "all")
+ imply_option("BROWSER_CHROME_URL", "chrome://browser/content/browser.xhtml")
