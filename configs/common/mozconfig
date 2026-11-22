@@ -24,3 +24,8 @@ if [ -f "$_pf_keys/google-safebrowsing.key" ]; then
   _pf_keys_dir="$(cd "$_pf_keys" && (pwd -W 2>/dev/null || pwd))"
   ac_add_options --with-google-safebrowsing-api-keyfile="$_pf_keys_dir/google-safebrowsing.key"
 fi
+
+# No crash reporter. Firefox builds it in by default on Windows, macOS and
+# Linux, and it sends crash reports to Mozilla's servers, which don't accept
+# reports from other browsers.
+ac_add_options --disable-crashreporter
