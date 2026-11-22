@@ -1,0 +1,13 @@
+diff --git a/browser/locales/en-US/browser/policies/policies-descriptions.ftl b/browser/locales/en-US/browser/policies/policies-descriptions.ftl
+index dc6b059fe6857652103c244dc6650bbc0d892145..9fb6a26e24e18f38c57112550234b7ec9c7c7b28 100644
+--- a/browser/locales/en-US/browser/policies/policies-descriptions.ftl
++++ b/browser/locales/en-US/browser/policies/policies-descriptions.ftl
+@@ -89,7 +89,7 @@ policy-DisableFeedbackCommands = Disable commands to send feedback from the Help
+ policy-DisableFirefoxAccounts1 = Disable account-based services, including sync.
+ 
+ # Firefox Screenshots is the name of the feature, and should not be translated.
+-policy-DisableFirefoxScreenshots = Disable the Firefox Screenshots feature.
++policy-DisableFirefoxScreenshots = Disable the Screenshots feature.
+ 
+ policy-DisableFirefoxStudies = Prevent { -brand-short-name } from running studies.
+ 

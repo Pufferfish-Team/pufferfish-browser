@@ -1,0 +1,13 @@
+diff --git a/browser/themes/addons/alpenglow/manifest.json b/browser/themes/addons/alpenglow/manifest.json
+index 8c6a8f8f05322d9d063997ef1640fd620972beaf..d982f5ea5fba56a18d85f437989dc4e5472cb45a 100644
+--- a/browser/themes/addons/alpenglow/manifest.json
++++ b/browser/themes/addons/alpenglow/manifest.json
+@@ -7,7 +7,7 @@
+     }
+   },
+ 
+-  "name": "Firefox Alpenglow",
++  "name": "Alpenglow",
+   "description": "Use a colorful appearance for buttons, menus, and windows.",
+   "author": "Mozilla",
+   "version": "1.5.3",
